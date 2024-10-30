@@ -46,13 +46,6 @@ body {
     gap: 20px;
 }
 
-.navbar-tabs .active {
-    background-color: #ffcc33; /* Example color for active tab */
-    color: #003366; /* Example text color for active tab */
-    border-radius: 5px;
-    padding: 5px 10px;
-}
-
 .navbar-tabs li a {
     color: white;
     text-decoration: none;

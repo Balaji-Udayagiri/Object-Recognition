@@ -31,7 +31,10 @@ def upload_image():
 
     # Run YOLO model on the image
     results = model(image)
-    annotated_image = results[0].plot()  # Draw bounding boxes
+    if len(results[0].boxes) > 0:
+        annotated_image = results[0].plot()  # Draw bounding boxes if objects are detected
+    else:
+        annotated_image = image  # Return the original image if nothing is detected
 
     # Convert the processed image to JPEG for download
     _, buffer = cv2.imencode('.jpg', annotated_image)
@@ -57,7 +60,7 @@ def handle_video_frame(data):
     # Send back the annotated frame to the frontend
     emit('response_frame', {'frame': 'data:image/jpeg;base64,' + frame_b64})
 
-    time.sleep(0.1)
+    time.sleep(0.05)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
