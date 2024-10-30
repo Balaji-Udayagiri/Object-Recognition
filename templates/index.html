@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Detection</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body onload="openRealTimeDetection()">
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <span><img style="border-radius: 50%;" width="40px" height="40px" src="/static/images/ng.jpg"></span>
+            <span style="font-size: larger; margin-bottom: 2px;" class="company-name">Northrop Grumman Object Detection System</span> 
+        </div>
+        <ul class="navbar-tabs">
+            <li style="font-size: larger;"><a href="#" id="imageUploadTab" onclick="openImageUpload()"><b>Detect by Image Upload</b></a></li>
+            <li style="font-size: larger;"><a href="#" id="realTimeTab" onclick="openRealTimeDetection()"><b>Detect Real-Time</b></a></li>
+        </ul>
+    </nav>
+    <div class="upload-container" id="uploadContainer" style="display: none;">
+        <h2>Upload Image</h2>
+        <input type="file" id="imageUpload" accept="image/*">
+        <button onclick="uploadImage()">Upload</button>
+        <div class="loader" id="loader" style="display: none;"></div>
+        <div id="result"></div>
+    </div>
+    <div class="video-container" id="videoContainer">
+        <h2>Real-Time Detection</h2>
+        <div class="video-feed">
+            <video id="video" width="500" height="380" autoplay></video>
+            <canvas id="canvas" width="500" height="380"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        const socket = io.connect(location.origin);
+
+        function openImageUpload() {
+            document.getElementById('uploadContainer').style.display = 'block';
+            document.getElementById('videoContainer').style.display = 'none';
+            setActiveTab('imageUploadTab');
+        }
+
+        function openRealTimeDetection() {
+            document.getElementById('uploadContainer').style.display = 'none';
+            document.getElementById('videoContainer').style.display = 'block';
+            startRealTimeDetection();
+            setActiveTab('realTimeTab');
+        }
+
+        function setActiveTab(tabId) {
+            document.getElementById('imageUploadTab').classList.remove('active');
+            document.getElementById('realTimeTab').classList.remove('active');
+
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function uploadImage() {
+            const fileInput = document.getElementById('imageUpload');
+            if (fileInput.files.length === 0) {
+                alert("Please select an image to upload");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            document.getElementById('loader').style.display = 'block';
+
+            fetch('/upload_image', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loader').style.display = 'none';
+
+                if (data.processed_image) {
+                    const resultDiv = document.getElementById('result');
+                    resultDiv.innerHTML = `<img src="${data.processed_image}" alt="Processed Image">`;
+
+                    const link = document.createElement('a');
+                    link.href = data.processed_image;
+                    link.download = 'processed_image.jpg';
+                    link.click();
+                }
+            })
+            .catch(error => {
+                console.error("Error processing image:", error);
+                document.getElementById('loader').style.display = 'none';
+            });
+        }
+
+        function startRealTimeDetection() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => video.srcObject = stream)
+                .catch(error => console.error("Webcam not accessible:", error));
+
+            function captureFrame() {
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const dataURL = canvas.toDataURL('image/jpeg');
+                socket.emit('video_frame', dataURL);
+
+                setTimeout(() => {
+                    requestAnimationFrame(captureFrame);
+                }, 200);
+            }
+
+            video.addEventListener('play', () => {
+                requestAnimationFrame(captureFrame);
+            });
+        }
+
+        socket.on('response_frame', data => {
+            const img = new Image();
+            img.src = data.frame;
+            img.onload = () => {
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+        });
+    </script>
+</body>
+</html>
