@@ -166,3 +166,66 @@ button:hover {
     max-width: 200px;
 }
 
+/* Confidence Scores Display */
+#confidenceScoresContainer {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#confidenceScoresContainer h3 {
+    font-size: 1.2em;
+    color: #003366;
+    margin-bottom: 10px;
+}
+
+.confidence-scores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.confidence-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 8px 12px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 220px;
+    border: 1px solid #ddd;
+}
+
+.confidence-item .label {
+    font-size: 1em;
+    color: #333;
+    font-weight: 500;
+}
+
+.confidence-item .badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Badge color coding */
+.badge.high {
+    background-color: #4CAF50; /* Green for high confidence */
+}
+
+.badge.medium {
+    background-color: #FF9800; /* Orange for medium confidence */
+}
+
+.badge.low {
+    background-color: #F44336; /* Red for low confidence */
+}

@@ -39,7 +39,7 @@ def handle_video_frame(data):
     frame_b64 = base64.b64encode(buffer).decode('utf-8')
     emit('response_frame', {'frame': 'data:image/jpeg;base64,' + frame_b64})
 
-    time.sleep(0.3)
+    time.sleep(0.1)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, port=5000)
