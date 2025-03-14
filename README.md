@@ -48,13 +48,13 @@ This project provides two main functionalities:
     3.  Click "Upload" or a similar button.
     4.  View the image with bounding boxes.
 
-![Image Upload Interface](static\images\image-upload.jpeg)
+![Image Upload Interface](static/images/image-upload.jpeg)
 
 * **Real-Time Detection:**
     1.  Grant webcam access when prompted.
     2.  View the live video feed with real-time bounding boxes.
 
-![Real-Time Interface](static\images\real-time.jpeg)
+![Real-Time Interface](static/images/real-time.jpeg)
 
 ## Example Results (Image Upload)
 
@@ -63,7 +63,7 @@ Here is an example of images processed by the object detection functionality, sh
 
 | YOLOv7 Output | Combined Output |
 |---|---|
-| ![YOLOv7 Result 1](static\images\Picture2.jpg) | ![Combined Result 1](static\images\Picture1.jpg) |
+| ![YOLOv7 Result 1](static/images/Picture2.jpg) | ![Combined Result 1](static/images/Picture1.jpg) |
 
 ## `.gitignore`
 
